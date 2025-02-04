@@ -1,0 +1,594 @@
+
+--[[
+░▒▓███████▓▒░░▒▓███████▓▒░░▒▓███████▓▒░░▒▓████████▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
+░▒▓███████▓▒░░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░  
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░ 
+░▒▓███████▓▒░░▒▓███████▓▒░░▒▓███████▓▒░░▒▓███████▓▒░  
+                                                      
+                                                      
+
+   ▄▄▄▄███▄▄▄▄      ▄████████  ▄████████  ▄█        ▄█  ▀█████████▄  
+ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███    ███ ███       ███    ███    ███ 
+ ███   ███   ███   ███    ███ ███    █▀  ███       ███▌   ███    ███ 
+ ███   ███   ███   ███    ███ ███        ███       ███▌  ▄███▄▄▄██▀  
+ ███   ███   ███ ▀███████████ ███        ███       ███▌ ▀▀███▀▀▀██▄  
+ ███   ███   ███   ███    ███ ███    █▄  ███       ███    ███    ██▄ 
+ ███   ███   ███   ███    ███ ███    ███ ███▌    ▄ ███    ███    ███ 
+  ▀█   ███   █▀    ███    █▀  ████████▀  █████▄▄██ █▀   ▄█████████▀  
+                                         ▀                           
+]]--
+
+local MacLib = loadstring(game:HttpGet("https://github.com/biggaboy212/Maclib/releases/latest/download/maclib.txt"))()
+
+local Window = MacLib:Window({
+	Title = "Spectral Hub (Bv0.1)",
+	Subtitle = "Build to Survive the Robots",
+	Size = UDim2.fromOffset(890, 450),
+	DragStyle = 1,
+	DisabledWindowControls = {},
+	ShowUserInfo = true,
+	Keybind = Enum.KeyCode.RightControl,
+	AcrylicBlur = true,
+})
+
+local globalSettings = {
+	UIBlurToggle = Window:GlobalSetting({
+		Name = "UI Blur",
+		Default = Window:GetAcrylicBlurState(),
+		Callback = function(bool)
+			Window:SetAcrylicBlurState(bool)
+			Window:Notify({
+				Title = Window.Settings.Title,
+				Description = (bool and "Enabled" or "Disabled") .. " UI Blur",
+				Lifetime = 5
+			})
+		end,
+	}),
+	NotificationToggler = Window:GlobalSetting({
+		Name = "Notifications",
+		Default = Window:GetNotificationsState(),
+		Callback = function(bool)
+			Window:SetNotificationsState(bool)
+			Window:Notify({
+				Title = Window.Settings.Title,
+				Description = (bool and "Enabled" or "Disabled") .. " Notifications",
+				Lifetime = 5
+			})
+		end,
+	}),
+	ShowUserInfo = Window:GlobalSetting({
+		Name = "Show User Info",
+		Default = Window:GetUserInfoState(),
+		Callback = function(bool)
+			Window:SetUserInfoState(bool)
+			Window:Notify({
+				Title = Window.Settings.Title,
+				Description = (bool and "Showing" or "Redacted") .. " User Info",
+				Lifetime = 5
+			})
+		end,
+	})
+}
+
+local tabGroups = {
+	TabGroup1 = Window:TabGroup()
+}
+
+local tabs = {
+	Main = tabGroups.TabGroup1:Tab({ Name = "Main", Image = "rbxassetid://11761637789" }),
+    Player = tabGroups.TabGroup1:Tab({ Name = "Player", Image = "rbxassetid://121700697298748" }),
+    Combat = tabGroups.TabGroup1:Tab({ Name = "Combat", Image = "rbxassetid://99275039709063" }),
+    Automatization = tabGroups.TabGroup1:Tab({ Name = "Automatization", Image = "rbxassetid://10734950309" }),
+    Visuals = tabGroups.TabGroup1:Tab({ Name = "Visuals", Image = "rbxassetid://104811813262009" }),
+	Settings = tabGroups.TabGroup1:Tab({ Name = "Settings", Image = "rbxassetid://10734950309" })
+}
+
+local sections = {
+	LeftMain = tabs.Main:Section({ Side = "Left" }),
+    RightMain = tabs.Main:Section({ Side = "Right" }),
+    LeftCombat = tabs.Combat:Section({ Side = "Left" }),
+    RightCombat = tabs.Combat:Section({ Side = "Right" }),
+    LeftAutomatization = tabs.Automatization:Section({ Side = "Left" }),
+    RightAutomatization = tabs.Automatization:Section({ Side = "Right" }),
+    RightVisuals = tabs.Visuals:Section({ Side = "Right" }),
+    LeftVisuals = tabs.Visuals:Section({ Side = "Left" }),
+    LeftPlayer = tabs.Player:Section({ Side = "Left" }),
+    RightPlayer = tabs.Player:Section({ Side = "Right" })
+}
+
+--[[
+   ▄▄▄▄███▄▄▄▄      ▄████████  ▄█  ███▄▄▄▄   
+ ▄██▀▀▀███▀▀▀██▄   ███    ███ ███  ███▀▀▀██▄ 
+ ███   ███   ███   ███    ███ ███▌ ███   ███ 
+ ███   ███   ███   ███    ███ ███▌ ███   ███ 
+ ███   ███   ███ ▀███████████ ███▌ ███   ███ 
+ ███   ███   ███   ███    ███ ███  ███   ███ 
+ ███   ███   ███   ███    ███ ███  ███   ███ 
+  ▀█   ███   █▀    ███    █▀  █▀    ▀█   █▀  
+                                             
+--]]
+
+sections.LeftMain:Paragraph({
+	Header = "Dev: BBD5",
+	Body = "Hand to sun for V3rmillion..."
+})
+
+sections.LeftMain:Label({
+	Text = "Discord Spectral Hub invite: https://discord.gg/m977WbdnzU"
+})
+
+sections.RightMain:SubLabel({
+	Text = "MACLIB: biggaboy212 (pls, dont be angrwy Uwu~) rrrrww..~ Awawawawawa..~ Awooo~ Uwwwww~~"
+})
+
+sections.RightMain:Button({
+	Name = "Infinity Yield",
+	Callback = function()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'),true))()
+	end,
+})
+
+sections.RightMain:Button({
+	Name = "Exunys ESP",
+	Callback = function()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/Exunys/Exunys-ESP/refs/heads/main/src/ESP.lua'),true))()
+	end,
+})
+
+
+--[[
+ ▄███████▄  ▄█          ▄████████ ▄██   ▄      ▄████████    ▄████████ 
+ ███    ███ ███         ███    ███ ███   ██▄   ███    ███   ███    ███ 
+ ███    ███ ███         ███    ███ ███▄▄▄███   ███    █▀    ███    ███ 
+ ███    ███ ███         ███    ███ ▀▀▀▀▀▀███  ▄███▄▄▄      ▄███▄▄▄▄██▀ 
+▀█████████▀  ███       ▀███████████ ▄██   ███ ▀▀███▀▀▀     ▀▀███▀▀▀▀▀   
+ ███        ███         ███    ███ ███   ███   ███    █▄  ▀███████████ 
+ ███        ███▌    ▄   ███    ███ ███   ███   ███    ███   ███    ███ 
+▄████▀      █████▄▄██   ███    █▀   ▀█████▀    ██████████   ███    ███ 
+           ▀                                               ███    ███ 
+]]--
+
+
+local players = game:GetService("Players")
+local runService = game:GetService("RunService")
+
+getgenv().Speed = getgenv().Speed or 32
+getgenv().Enabled = getgenv().Enabled ~= nil and getgenv().Enabled or true
+
+local function setWalkSpeed(character, speed)
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        if humanoid.WalkSpeed ~= speed then
+            humanoid.WalkSpeed = speed
+        end
+    end
+end
+
+local function onCharacterAdded(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    setWalkSpeed(character, getgenv().Speed)
+
+    humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+        if getgenv().Enabled and humanoid.WalkSpeed ~= getgenv().Speed then
+            humanoid.WalkSpeed = getgenv().Speed
+        end
+    end)
+end
+
+local localPlayer = players.LocalPlayer
+if localPlayer.Character then
+    onCharacterAdded(localPlayer.Character)
+end
+
+localPlayer.CharacterAdded:Connect(onCharacterAdded)
+runService.Heartbeat:Connect(function()
+    if getgenv().Enabled and localPlayer.Character then
+        setWalkSpeed(localPlayer.Character, getgenv().Speed)
+    end
+end)
+
+sections.LeftPlayer:Slider({
+	Name = "Speedpower",
+	Default = 32,
+	Minimum = 16,
+	Maximum = 50,
+	DisplayMethod = "Value",
+	Precision = 1,
+	Callback = function(Speedpower)
+		getgenv().Speed = Speedpower
+	end
+}, "Slider")
+
+
+sections.LeftPlayer:Slider({
+	Name = "Jumppower",
+	Default = 50,
+	Minimum = 50,
+	Maximum = 300,
+	DisplayMethod = "Value",
+	Precision = 1,
+	Callback = function(Jumppower)
+		game.Players.LocalPlayer.Character.Humanoid.JumpPower = Jumppower
+	end
+}, "Slider")
+
+
+sections.LeftPlayer:Toggle({
+    Name = "Infinity jump",
+    Default = false,
+    Callback = function(infjump)
+        getgenv().infj = infjump
+        updateJump()
+    end,
+}, "Toggle")
+
+local player = game:GetService("Players").LocalPlayer
+
+function updateJump()
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    
+    if getgenv().infj and humanoid then
+        if _G.jpbypass then _G.jpbypass:Disconnect() end
+        if _G.jumpcheck then _G.jumpcheck:Disconnect() end
+        
+        _G.jpbypass = humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
+            humanoid.JumpPower = 50
+        end)
+        
+        _G.jumpcheck = game:GetService("UserInputService").JumpRequest:Connect(function()
+            if getgenv().infj then
+                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end)
+    else
+        if _G.jpbypass then
+            _G.jpbypass:Disconnect()
+            _G.jpbypass = nil
+        end
+        if _G.jumpcheck then
+            _G.jumpcheck:Disconnect()
+            _G.jumpcheck = nil
+        end
+    end
+end
+
+player.CharacterAdded:Connect(function()
+    task.wait(1)
+    updateJump()
+end)
+
+updateJump()
+
+
+sections.LeftPlayer:Slider({
+	Name = "Gravity",
+	Default = 196.2,
+	Minimum = 0,
+	Maximum = 196.2,
+	DisplayMethod = "Value",
+	Precision = 1,
+	Callback = function(grav)
+		game.Workspace.Gravity = grav
+	end
+}, "Slider")
+
+
+
+
+--[[
+   ▄███████▄  ▄█          ▄████████ ▄██   ▄      ▄████████    ▄████████         ▄████████  ▄██████▄  ▀█████████▄   ▄██████▄      ███          
+  ███    ███ ███         ███    ███ ███   ██▄   ███    ███   ███    ███        ███    ███ ███    ███   ███    ███ ███    ███ ▀█████████▄      
+  ███    ███ ███         ███    ███ ███▄▄▄███   ███    █▀    ███    ███        ███    ███ ███    ███   ███    ███ ███    ███    ▀███▀▀██      
+  ███    ███ ███         ███    ███ ▀▀▀▀▀▀███  ▄███▄▄▄      ▄███▄▄▄▄██▀       ▄███▄▄▄▄██▀ ███    ███  ▄███▄▄▄██▀  ███    ███     ███   ▀      
+▀█████████▀  ███       ▀███████████ ▄██   ███ ▀▀███▀▀▀     ▀▀███▀▀▀▀▀        ▀▀███▀▀▀▀▀   ███    ███ ▀▀███▀▀▀██▄  ███    ███     ███          
+  ███        ███         ███    ███ ███   ███   ███    █▄  ▀███████████      ▀███████████ ███    ███   ███    ██▄ ███    ███     ███          
+  ███        ███▌    ▄   ███    ███ ███   ███   ███    ███   ███    ███        ███    ███ ███    ███   ███    ███ ███    ███     ███          
+ ▄████▀      █████▄▄██   ███    █▀   ▀█████▀    ██████████   ███    ███        ███    ███  ▀██████▀  ▄█████████▀   ▀██████▀     ▄████▀        
+             ▀                                               ███    ███        ███    ███                                                     
+]]--
+
+
+sections.RightPlayer:Toggle({
+	Name = "Ignore Mines (Need 5sec)",
+	Default = false,
+	Callback = function(ignoremines)
+        _G.ignoreMines = ignoremines
+	end,
+}, "Toggle")
+
+sections.RightPlayer:Toggle({
+	Name = "Ignore Wire (Need 5sec)",
+	Default = false,
+	Callback = function(ignorewire)
+        _G.IgnoreWire = ignorewire
+	end,
+}, "Toggle")
+
+local function explodeMines()
+    local localPlayer = game.Players.LocalPlayer
+    local character = localPlayer.Character
+    if not character then return end
+
+    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+    if not humanoidRootPart then return end
+
+    local blocksFolder = workspace:FindFirstChild("Blocks")
+    if blocksFolder then
+        for _, folder in ipairs(blocksFolder:GetChildren()) do
+            if folder:IsA("Folder") then
+                for _, child in ipairs(folder:GetChildren()) do
+                    if child:IsA("BasePart") and child.Name == "Landmine" then
+                        humanoidRootPart.CFrame = child.CFrame
+                        task.wait(0.3)
+                    end
+                end
+            end
+        end
+    end
+end
+
+sections.RightPlayer:Button({
+	Name = "Explode All Mines",
+	Callback = function()
+        explodeMines()
+	end,
+})
+
+
+--[[
+
+   ▄███████▄  ▄█          ▄████████ ▄██   ▄      ▄████████    ▄████████         ▄████████  ▄██████▄  ▀█████████▄   ▄██████▄      ███             ▄████████    ▄████████  ▄█          ▄████████  ▄████████     ███     
+  ███    ███ ███         ███    ███ ███   ██▄   ███    ███   ███    ███        ███    ███ ███    ███   ███    ███ ███    ███ ▀█████████▄        ███    ███   ███    ███ ███         ███    ███ ███    ███ ▀█████████▄ 
+  ███    ███ ███         ███    ███ ███▄▄▄███   ███    █▀    ███    ███        ███    ███ ███    ███   ███    ███ ███    ███    ▀███▀▀██        ███    █▀    ███    █▀  ███         ███    █▀  ███    █▀     ▀███▀▀██ 
+  ███    ███ ███         ███    ███ ▀▀▀▀▀▀███  ▄███▄▄▄      ▄███▄▄▄▄██▀       ▄███▄▄▄▄██▀ ███    ███  ▄███▄▄▄██▀  ███    ███     ███   ▀        ███         ▄███▄▄▄     ███        ▄███▄▄▄     ███            ███   ▀ 
+▀█████████▀  ███       ▀███████████ ▄██   ███ ▀▀███▀▀▀     ▀▀███▀▀▀▀▀        ▀▀███▀▀▀▀▀   ███    ███ ▀▀███▀▀▀██▄  ███    ███     ███          ▀███████████ ▀▀███▀▀▀     ███       ▀▀███▀▀▀     ███            ███     
+  ███        ███         ███    ███ ███   ███   ███    █▄  ▀███████████      ▀███████████ ███    ███   ███    ██▄ ███    ███     ███                   ███   ███    █▄  ███         ███    █▄  ███    █▄      ███     
+  ███        ███▌    ▄   ███    ███ ███   ███   ███    ███   ███    ███        ███    ███ ███    ███   ███    ███ ███    ███     ███             ▄█    ███   ███    ███ ███▌    ▄   ███    ███ ███    ███     ███     
+ ▄████▀      █████▄▄██   ███    █▀   ▀█████▀    ██████████   ███    ███        ███    ███  ▀██████▀  ▄█████████▀   ▀██████▀     ▄████▀         ▄████████▀    ██████████ █████▄▄██   ██████████ ████████▀     ▄████▀   
+             ▀                                               ███    ███        ███    ███                                                                               ▀                                             
+                          
+]]--
+
+local function SpawnAsRobot(robot)
+    local args = {
+        [1] = game:GetService("ReplicatedStorage").Assets.Robots[robot]
+    }
+    game:GetService("ReplicatedStorage").Remotes.Robot.Spawn:FireServer(unpack(args))
+end
+
+sections.RightPlayer:Paragraph({
+	Header = "Spawn as special Robot",
+	Body = "Works only if you in Robot Team."
+})
+
+sections.RightPlayer:Button({
+	Name = "Spawn as Default Robot",
+	Callback = function()
+        SpawnAsRobot("Default")
+	end,
+})
+
+sections.RightPlayer:Button({
+    Name = "Spawn as Skirmisher Robot",
+    Callback = function()
+        SpawnAsRobot("Skirmisher")
+    end,
+})
+
+sections.RightPlayer:Button({
+    Name = "Spawn as Jumper Robot",
+    Callback = function()
+        SpawnAsRobot("Jumper")
+    end,
+})
+
+
+sections.RightPlayer:Button({
+    Name = "Spawn as Tank Robot",
+    Callback = function()
+        SpawnAsRobot("Tank")
+    end,
+})
+
+sections.RightPlayer:Button({
+    Name = "Spawn as Ghost Robot",
+    Callback = function()
+        SpawnAsRobot("Ghost")
+    end,
+})
+
+
+sections.RightPlayer:Button({
+    Name = "Spawn as Saboteur Robot",
+    Callback = function()
+        SpawnAsRobot("Saboteur")
+    end,
+})
+
+--[[
+ ▄████████  ▄██████▄    ▄▄▄▄███▄▄▄▄   ▀█████████▄     ▄████████     ███             ▄█    █▄     ▄█      ███     ▀█████████▄   ▄██████▄  ▀████  █ ▐████▀ 
+███    ███ ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███   ███    ███ ▀█████████▄        ███    ███   ███  ▀█████████▄   ███    ███ ███    ███   ███▌   ████▀  
+███    █▀  ███    ███ ███   ███   ███   ███    ███   ███    ███    ▀███▀▀██        ███    ███   ███▌    ▀███▀▀██   ███    ███ ███    ███    ███  ▐███    
+███        ███    ███ ███   ███   ███  ▄███▄▄▄██▀    ███    ███     ███   ▀       ▄███▄▄▄▄███▄▄ ███▌     ███   ▀  ▄███▄▄▄██▀  ███    ███    ▀███▄███▀    
+███        ███    ███ ███   ███   ███ ▀▀███▀▀▀██▄  ▀███████████     ███          ▀▀███▀▀▀▀███▀  ███▌     ███     ▀▀███▀▀▀██▄  ███    ███ █  ████▀██▄  █  
+███    █▄  ███    ███ ███   ███   ███   ███    ██▄   ███    ███     ███            ███    ███   ███      ███       ███    ██▄ ███    ███   ▐███  ▀███    
+███    ███ ███    ███ ███   ███   ███   ███    ███   ███    ███     ███            ███    ███   ███      ███       ███    ███ ███    ███  ▄███     ███▄  
+████████▀   ▀██████▀   ▀█   ███   █▀  ▄█████████▀    ███    █▀     ▄████▀          ███    █▀    █▀      ▄████▀   ▄█████████▀   ▀██████▀  ████   █   ███▄ 
+                                                                                                                                                         
+]]--
+
+
+_G.HEnabled = false
+_G.PartSize = Vector3.new(5, 5, 5)
+_G.Transparency = 0.5
+_G.Color = Color3.new(1, 1, 1)
+_G.Update = 1
+
+local player = game.Players.LocalPlayer
+local defaultSize = Vector3.new(2, 2, 1)
+local defaultTransparency = 0
+local defaultColor = Color3.new(1, 1, 1)
+
+local function resizePart(part, size, transparency, color)
+    if part then
+        part.Size = size
+        part.Transparency = transparency
+        if part:IsA("BasePart") then
+            part.Color = color
+        end
+    end
+end
+
+local function shouldResize(part)
+    return part and (part.Size ~= _G.PartSize or part.Color ~= _G.Color)
+end
+
+local function updateHitboxes()
+    while _G.HEnabled do
+        for _, v in ipairs(game.Players:GetPlayers()) do
+            if v ~= player and v.Character then
+                local rootPart = v.Character:FindFirstChild("HumanoidRootPart")
+                if rootPart then
+                    resizePart(rootPart, _G.PartSize, _G.Transparency, _G.Color)
+                end
+            end
+        end
+        wait(_G.Update)
+    end
+    for _, v in ipairs(game.Players:GetPlayers()) do
+        if v ~= player and v.Character then
+            local rootPart = v.Character:FindFirstChild("HumanoidRootPart")
+            if rootPart then
+                resizePart(rootPart, defaultSize, defaultTransparency, defaultColor)
+            end
+        end
+    end
+end
+
+sections.RightCombat:Toggle({
+	Name = "Hitbox Expander",
+	Default = false,
+	Callback = function(value)
+        _G.HEnabled = value
+        if value then
+            task.spawn(updateHitboxes)
+        end
+	end,
+}, "Toggle")
+
+sections.RightCombat:Slider({
+	Name = "Size",
+	Default = 5,
+	Minimum = 1,
+	Maximum = 100,
+	DisplayMethod = "Value",
+	Precision = 1,
+	Callback = function(HTBXSize)
+        _G.PartSize = Vector3.new(HTBXSize, HTBXSize, HTBXSize)
+	end
+}, "Slider")
+
+local alphaColorPicker = sections.RightCombat:Colorpicker({
+	Name = "Color&Transparency",
+	Default = Color3.new(1, 1, 1),
+	Alpha = 0.5,
+	Callback = function(HTBcolor, HTBalpha)
+		_G.Color = HTBcolor
+        _G.Transparency = HTBalpha
+	end,
+}, "TransparencyColorpicker")
+
+sections.RightCombat:Slider({
+	Name = "Update Rate (sec)",
+	Default = 1,
+	Minimum = 0.1,
+	Maximum = 20,
+	DisplayMethod = "Value",
+	Precision = 0,
+	Callback = function(UpdateRatehtbx)
+		_G.Update = UpdateRatehtbx
+	end
+}, "Slider")
+
+
+--[[
+   ▄████████ ███    █▄      ███      ▄██████▄    ▄▄▄▄███▄▄▄▄      ▄████████     ███      ▄█   ▄███████▄     ▄████████     ███      ▄█   ▄██████▄  ███▄▄▄▄   
+  ███    ███ ███    ███ ▀█████████▄ ███    ███ ▄██▀▀▀███▀▀▀██▄   ███    ███ ▀█████████▄ ███  ██▀     ▄██   ███    ███ ▀█████████▄ ███  ███    ███ ███▀▀▀██▄ 
+  ███    ███ ███    ███    ▀███▀▀██ ███    ███ ███   ███   ███   ███    ███    ▀███▀▀██ ███▌       ▄███▀   ███    ███    ▀███▀▀██ ███▌ ███    ███ ███   ███ 
+  ███    ███ ███    ███     ███   ▀ ███    ███ ███   ███   ███   ███    ███     ███   ▀ ███▌  ▀█▀▄███▀▄▄   ███    ███     ███   ▀ ███▌ ███    ███ ███   ███ 
+▀███████████ ███    ███     ███     ███    ███ ███   ███   ███ ▀███████████     ███     ███▌   ▄███▀   ▀ ▀███████████     ███     ███▌ ███    ███ ███   ███ 
+  ███    ███ ███    ███     ███     ███    ███ ███   ███   ███   ███    ███     ███     ███  ▄███▀         ███    ███     ███     ███  ███    ███ ███   ███ 
+  ███    ███ ███    ███     ███     ███    ███ ███   ███   ███   ███    ███     ███     ███  ███▄     ▄█   ███    ███     ███     ███  ███    ███ ███   ███ 
+  ███    █▀  ████████▀     ▄████▀    ▀██████▀   ▀█   ███   █▀    ███    █▀     ▄████▀   █▀    ▀████████▀   ███    █▀     ▄████▀   █▀    ▀██████▀   ▀█   █▀  
+                                                                                                                                                            
+]]--
+
+
+
+
+
+
+--[[
+   ▄████████ ███▄▄▄▄   ████████▄  
+  ███    ███ ███▀▀▀██▄ ███   ▀███ 
+  ███    █▀  ███   ███ ███    ███ 
+ ▄███▄▄▄     ███   ███ ███    ███ 
+▀▀███▀▀▀     ███   ███ ███    ███ 
+  ███    █▄  ███   ███ ███    ███ 
+  ███    ███ ███   ███ ███   ▄███ 
+  ██████████  ▀█   █▀  ████████▀  
+                                  
+]]--
+
+MacLib:SetFolder("Maclib")
+tabs.Settings:InsertConfigSection("Left")
+Window.onUnloaded(function()
+
+end)
+tabs.Main:Select()
+MacLib:LoadAutoLoadConfig()
+
+--[[
+ ▄█        ▄██████▄   ▄██████▄     ▄███████▄    ▄████████ 
+███       ███    ███ ███    ███   ███    ███   ███    ███ 
+███       ███    ███ ███    ███   ███    ███   ███    █▀  
+███       ███    ███ ███    ███   ███    ███   ███        
+███       ███    ███ ███    ███ ▀█████████▀  ▀███████████ 
+███       ███    ███ ███    ███   ███                 ███ 
+███▌    ▄ ███    ███ ███    ███   ███           ▄█    ███ 
+█████▄▄██  ▀██████▀   ▀██████▀   ▄████▀       ▄████████▀  
+▀                                                         
+]]--
+
+while task.wait(_G.Update) do
+    if _G.HEnabled then
+        updateHitboxes()
+    end
+end
+
+while true do 
+    wait(5)
+    local blocksFolder = workspace:FindFirstChild("Blocks")
+    if blocksFolder then
+        for _, folder in ipairs(blocksFolder:GetChildren()) do
+            if folder:IsA("Folder") then
+                for _, child in ipairs(folder:GetChildren()) do
+                    if child.Name == "Landmine" then
+                        local base = child:FindFirstChildWhichIsA("MeshPart")
+                        if base then
+                            base.CanTouch = not _G.ignoreMines
+                        end
+                    elseif child.Name == "Barbed_Wire" then
+                        child.CanTouch = not _G.IgnoreWire
+                    end
+                end
+            end
+        end
+    end
+end
+
+
+    
